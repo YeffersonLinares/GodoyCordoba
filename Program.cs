@@ -36,19 +36,42 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader();
         });
 });
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        
+        Console.WriteLine($"Authentication failed: {jwtSettings["SecretKey"]}");
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+        };
+
+        // 🔴 Capturar eventos de autenticación para ver el error exacto
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine("OnChallenge triggered");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("Token validated successfully");
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddAuthorization();
@@ -71,10 +94,10 @@ if (app.Environment.IsDevelopment())
     //     c.RoutePrefix = string.Empty; // Para que Swagger esté en la raíz "/"
     // });
     app.MapOpenApi();
+    app.UseRouting();
 }
 
-app.UseRouting();
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 var summaries = new[]
 {
@@ -97,6 +120,7 @@ app.MapGet("/weatherforecast", () =>
 
 
 
+app.UseHttpsRedirection();
 app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();

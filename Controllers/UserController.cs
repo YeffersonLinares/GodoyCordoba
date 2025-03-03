@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GodoyCordoba.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

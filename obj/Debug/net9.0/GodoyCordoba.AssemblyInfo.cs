@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GodoyCordoba")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+831849c2f93796ab956f951897685841430c9766")]
 [assembly: System.Reflection.AssemblyProductAttribute("GodoyCordoba")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GodoyCordoba")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -45,12 +45,12 @@ namespace GodoyCordoba.Controllers
             {
                 return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
             }
-
-            var token = GenerateJwtToken(user);
-
             user.LastLogin = DateOnly.FromDateTime(DateTime.Now);
             _context.users.Update(user);
             _context.SaveChanges();
+
+            var token = GenerateJwtToken(user);
+
 
             return Ok(new { token });
         }
@@ -59,13 +59,14 @@ namespace GodoyCordoba.Controllers
         {
             var jwtSettings = _config.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
+            Console.WriteLine($"Secret Key: {jwtSettings["SecretKey"]}"); // Debug
 
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("userId", user.Id.ToString()),
-                new Claim("Email", user.Email)
+                new Claim("email", user.Email)
             };
 
             var key = new SymmetricSecurityKey(secretKey);
@@ -75,7 +76,7 @@ namespace GodoyCordoba.Controllers
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(23), // Token válido por 2 horas
+                expires: DateTime.UtcNow.AddHours(2), // Token válido por 2 horas
                 signingCredentials: creds
             );
 
