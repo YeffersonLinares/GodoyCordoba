@@ -1,0 +1,6 @@
+@GodoyCordoba_HostAddress = http://localhost:5075
+
+GET {{GodoyCordoba_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
